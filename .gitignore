@@ -1,0 +1,7 @@
+bin/
+.settings/
+.project
+.cproject
+*.aux
+*.log
+*.syntex.gz
