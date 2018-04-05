@@ -1,12 +1,88 @@
 \documentclass{article}
-\title{Cache Coherence Simulator}
-\author{Aditya Gupta\\2015CSB1003 \and Love Mehta\\2014CSB10??}
+\usepackage{tikz}
+\title{Design Document\\Cache Coherence Simulator}
+\author{Aditya Gupta\\2015CSB1003 \and Love Mehta\\2014CSB1018}
+\date{}
 \begin{document}
 \maketitle
 \section{Introduction}
+When we wish to design caches for a multiprocessor system we need to take care of cache coherence among the caches and the main memory. For maintaining cache coherence we define different protocols for communication amongst the caches which are MSI (Modified-Shared-Invalid), MESI (Modified-Exclusive-Shared-Invalid) and MOESI (Modified-Owned-Exclusive-Shared-Invalid).
 \subsection{Objectives}
+The main objectives of this project is to simulate different cache coherence protocols for gaining statistics about the use of cache and an insight into the working of the different cache coherence protocols in a detailed manner. We can list them in detail as follows:
+\begin{itemize}
+\item Gaining statistics about the cache usage - number of flushes, hits, misses, evictions, cache sharing.
+\item Also statistics about the main memory usage - amount of main memory used.
+\item Details about state transitions in the protocol, which cache line is in which state during and after each memory access.
+\item Statistics about bus usage such as number of bus requests, requesting caches, most frequent bus  requests' information.
+\item Provide an educational means for learning the working of caches' coherence.
+\item Statistics about cycles required for each operation - bus requests, snooping, memory access and total program execution.
+\end{itemize}
 \subsection{Scope}
+The scope of the given project is limited to the following points:
+\begin{itemize}
+\item The project only intends to study cache coherence based on the address not on the memory values.
+\item It simplifies cycles required for each operation to few hypothetical simple values.
+\item It does not take into account other complications regarding actual practical system, i.e. it simulates a simpler complexity system without any practical considerations.
+\end{itemize}
 \subsection{Functionality}
+Following are the intended functionalities of the given project:
+\begin{itemize}
+\item Take an input in format of list of memory accesses and simulate each accesses in a linear manner providing relevant statistical information along with.
+\item Provide any particular information about the cache or bus at the end based on user request or by default.
+\item Finally giving all relevant statistics about the simulation performed.
+\end{itemize}
 \section{Implementation Details}
+We wish to have the following modules:
+\subsection{Cache Set}
+\subsubsection*{Data Structures}
+\begin{itemize}
+\item Cache Line - structure containing address (corresponding to main memory), tag, set and state information.
+\item List of Cache Lines.
+\end{itemize}
+\subsubsection*{Functions}
+\begin{itemize}
+\item Add a line, Remove a line, Checking existence of a line, eviction of a line from the set.
+\item Getting number of lines currently in the set and whether set is empty or full.
+\end{itemize}
+\subsection{Cache}
+\subsubsection*{Data Structures}
+\begin{itemize}
+\item ID of the cache (ordinal of the processor attached to).
+\item Lists of Cache sets.
+\end{itemize}
+\subsubsection*{Functions}
+\begin{itemize}
+\item Add a line, Remove a line, Checking existence of a line, returning state of a line or assigning a state to a line.
+\item Handling read \& write requests (performing required operations depending upon the existence and if present then state of line).
+\item Handling bus requests.
+\item Performing an atomic operation consisting of one or many of the above operations.
+\end{itemize}
+\subsection{Bus}
+\subsubsection*{Data Structures}
+\begin{itemize}
+\item Bus request - structure consisting of an operation for a particular address.
+\item A lock for accessing the bus.
+\end{itemize}
+\subsubsection*{Functions}
+\begin{itemize}
+\item Lock accessing and releasing.
+\item Performing an atomic operation of broadcasting and receiving the messages, also performing relevant operations.
+\end{itemize}
+\subsection{Simulator}
+\subsubsection*{Data Structures}
+\begin{itemize}
+\item Instances of Caches and bus.
+\end{itemize}
+\subsubsection*{Functions}
+\begin{itemize}
+\item Reading input file and simulating(pushing) the request on the corresponding cache. Note that the requests will be fulfilled later in an atomic order through the use of the bus.
+\item Maintaining statistics through internal variables of the instances and displaying them (depending upon client requests).
+\end{itemize}
 \section{Testing}
+Following types of tests are tentatively planned to be done:
+\begin{itemize}
+\item Tests that exhaustively check every state transition and its side effects corresponding to each protocol.
+\item Tests for checking correctness of the simulator's caches' and bus's address and line management.
+\item Tests for checking correctness of the statistics provided by the simulator.
+\end{itemize}
 \end{document}
