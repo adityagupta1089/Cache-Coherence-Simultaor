@@ -3,14 +3,14 @@ SDIR=src
 ODIR=bin
 
 CC=g++
-CFLAGS=-I $(IDIR) -std=c++11 -Wall -Wextra -pedantic -g
+CFLAGS=-I $(IDIR) -std=c++11 -g#-Wall -Wextra -pedantic
 
-_DEPS = Cache.hpp
-DEPS = $(patsubst %, $(IDIR)/%, $(_DEPS))
+DEPS = $(wildcard $(IDIR)/*.hpp)
 
-SOURCES = Cache.cpp
+_SOURCES = $(wildcard $(SDIR)/*.cpp)
+SOURCES = $(filter-out $(SDIR)/main.cpp, $(_SOURCES))
 _OBJ = $(SOURCES:.cpp=.o)
-OBJ = $(patsubst %, $(ODIR)/%, $(_OBJ))
+OBJ = $(patsubst $(SDIR)/%, $(ODIR)/%, $(_OBJ))
 
 $(ODIR)/%.o: $(SDIR)/%.cpp $(DEPS)
 	$(CC) -c -o $@ $< $(CFLAGS)
