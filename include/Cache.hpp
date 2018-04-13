@@ -11,17 +11,18 @@ class Cache {
 		_id id;
 		std::vector<CacheSet> sets;
 
-	public:
-		Cache(_id id, protocol _protocol);
-
 		void add_line(_address address);
 		void remove_line(_address address);
 		bool contains_line(_address address);
 
+	public:
+		Cache(_id id);
+
 		virtual void read(_address) = 0;
 		virtual void write(_address) = 0;
 
-		virtual ~Cache() = 0;
+		virtual ~Cache() {
+		}
 };
 
 #endif /* INCLUDE_CACHE_H_ */

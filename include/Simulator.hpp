@@ -15,11 +15,11 @@ enum _operation {
 class Simulator {
 
 	private:
-		std::vector<Cache> caches;
+		std::vector<Cache*> caches;
 		Bus bus;
 
 	public:
-		Simulator();
+		Simulator(protocol _protocol);
 		void push_request(_operation operation, _address address, _id id);
 
 };

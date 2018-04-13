@@ -2,8 +2,8 @@ IDIR=include
 SDIR=src
 ODIR=bin
 
-CC=g++
-CFLAGS=-I $(IDIR) -std=c++11 -g#-Wall -Wextra -pedantic
+CC=clang++
+CFLAGS=-I $(IDIR) -std=c++11 -Wall -Wextra -pedantic -g
 
 DEPS = $(wildcard $(IDIR)/*.hpp)
 

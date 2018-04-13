@@ -3,9 +3,12 @@
 
 #include "Cache.hpp"
 
-class MOESICache: Cache {
+class MOESICache: public Cache {
+			private:
+		void read(_address address);
+		void write(_address address);
 	public:
-			MOESICache();
+		MOESICache(_id id);
 };
 
 #endif /* INCLUDE_MOESICACHE_H_ */
