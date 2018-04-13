@@ -19,7 +19,7 @@ class Simulator {
 		Bus bus;
 
 	public:
-		Simulator(protocol _protocol);
+		Simulator();
 		void push_request(_operation operation, _address address, _id id);
 
 };

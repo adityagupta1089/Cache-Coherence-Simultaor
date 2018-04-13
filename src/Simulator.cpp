@@ -4,10 +4,10 @@
 #include <Simulator.hpp>
 #include <iostream>
 
-Simulator::Simulator(protocol pprotocol) {
+Simulator::Simulator() {
 	for (_id i = 0; i < PROCESSORS; i++) {
 		Cache* cache;
-		switch (pprotocol) {
+		switch (PROTOCOL) {
 			case MSI:
 				cache = new MSICache(i);
 				break;

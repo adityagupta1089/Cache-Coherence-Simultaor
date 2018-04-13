@@ -11,7 +11,7 @@ int main(int argc, char** argv) {
 		return 1;
 	}
 
-	Simulator simulator(PROTOCOL);
+	Simulator simulator;
 
 	std::ifstream in;
 	in.open(argv[1]);
