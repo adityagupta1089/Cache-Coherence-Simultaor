@@ -16,6 +16,11 @@ const unsigned int SETS = 64;
 const unsigned int LINES_PER_SET = 8;
 const unsigned int BYTES_PER_LINE = 64;
 
+const unsigned int ADDRESS_BITS = 32;
+const unsigned int OFFSET_BITS = 6;
+const unsigned int INDEX_BITS = 6;
+const unsigned int TAG_BITS = 20;
+
 const protocol PROTOCOL = MSI;
 
 #endif /* INCLUDE_CONSTANTS_HPP_ */

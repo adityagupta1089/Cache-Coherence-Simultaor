@@ -1,29 +1,42 @@
 #ifndef INCLUDE_CACHESET_HPP_
 #define INCLUDE_CACHESET_HPP_
 
-#include <vector>
-
 #include "Constants.hpp"
 
 class CacheSet {
-	private:
+	public:
+		enum line_state {
+			MODIFIED,
+			OWNED,
+			EXCLUSIVE,
+			SHARED,
+			INVALID
+		};
+
 		struct CacheLine {
 				_address address;
-				//etc
+				line_state state;
+				CacheLine(_address paddress, line_state pstate)
+						: address(paddress), state(pstate) {
+				}
 		};
-		std::vector<CacheLine> lines;
+
+	private:
+		CacheLine** lines;
 
 	public:
-		void add_line(_address address);
+		CacheSet();
+
+		void add_line(_address address, line_state state);
 		void remove_line(_address address);
-		bool contains_line(_address address);
+		CacheLine* get_line(_address address);
 
 		bool empty() {
-			return lines.empty();
+			// TODO
 		}
 
 		unsigned int size() {
-			return lines.size();
+			// TODO
 		}
 };
 

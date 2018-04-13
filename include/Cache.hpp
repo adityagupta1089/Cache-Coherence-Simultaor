@@ -9,11 +9,16 @@
 class Cache {
 	private:
 		_id id;
-		std::vector<CacheSet> sets;
+
+	protected:
+		std::vector<CacheSet*> sets;
 
 		void add_line(_address address);
 		void remove_line(_address address);
-		bool contains_line(_address address);
+
+		CacheSet::CacheLine* get_line(_address address);
+
+		_id get_set_id(_address address);
 
 	public:
 		Cache(_id id);
