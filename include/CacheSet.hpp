@@ -1,6 +1,8 @@
 #ifndef INCLUDE_CACHESET_HPP_
 #define INCLUDE_CACHESET_HPP_
 
+#include <vector>
+
 #include "Constants.hpp"
 
 class CacheSet {
@@ -16,28 +18,25 @@ class CacheSet {
 		struct CacheLine {
 				_address address;
 				line_state state;
+
 				CacheLine(_address paddress, line_state pstate)
 						: address(paddress), state(pstate) {
+				}
+
+				void invalidate() {
+					state = INVALID;
 				}
 		};
 
 	private:
-		CacheLine** lines;
+		std::vector<CacheLine*> lines;
 
 	public:
 		CacheSet();
 
-		void add_line(_address address, line_state state);
-		void remove_line(_address address);
-		CacheLine* get_line(_address address);
-
-		bool empty() {
-			// TODO
-		}
-
-		unsigned int size() {
-			// TODO
-		}
+		void add_line(_address, line_state);
+		void remove_line(_address);
+		CacheLine* get_line(_address);
 };
 
 #endif /* INCLUDE_CACHESET_HPP_ */

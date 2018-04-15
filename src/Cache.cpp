@@ -1,7 +1,7 @@
 #include <Cache.hpp>
 
-Cache::Cache(_id pid)
-		: id(pid) {
+Cache::Cache(_id pid, Bus* pbus)
+		: id(pid), bus(pbus) {
 	for (unsigned i = 0; i < SETS; i++) {
 		sets.push_back(new CacheSet());
 	}

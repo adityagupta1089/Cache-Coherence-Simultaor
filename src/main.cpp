@@ -1,4 +1,5 @@
 #include <Constants.hpp>
+#include <stdlib.h>
 #include <Simulator.hpp>
 #include <fstream>
 #include <iostream>
@@ -8,7 +9,7 @@ class Simulator;
 int main(int argc, char** argv) {
 	if (argc < 2) {
 		std::cerr << "Input format: " << argv[0] << " <input_file>\n";
-		return 1;
+		exit(1);
 	}
 
 	Simulator simulator;
@@ -18,7 +19,7 @@ int main(int argc, char** argv) {
 
 	if (!in) {
 		std::cerr << "Unable to open file " << argv[1] << "\n";
-		return 1;
+		exit(1);
 	} else {
 		char operation;
 		_address address;

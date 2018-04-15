@@ -3,7 +3,6 @@
 
 #include <vector>
 
-#include "Bus.hpp"
 #include "Cache.hpp"
 #include "Constants.hpp"
 
@@ -16,11 +15,11 @@ class Simulator {
 
 	private:
 		std::vector<Cache*> caches;
-		Bus bus;
+		Bus* bus;
 
 	public:
 		Simulator();
-		void push_request(_operation operation, _address address, _id id);
+		void push_request(_operation, _address, _id);
 
 };
 
