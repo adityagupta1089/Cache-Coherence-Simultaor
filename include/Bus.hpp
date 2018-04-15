@@ -9,7 +9,7 @@
 class Cache;
 
 /*
- * NOTE: Don't include Cache.cpp, cross-referencing problem
+ * NOTE: Don't include Cache.hpp, cross-referencing problem
  */
 class Bus {
 	private:

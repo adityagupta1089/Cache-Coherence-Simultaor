@@ -11,10 +11,6 @@ void CacheSet::add_line(_address address, line_state state) {
 	lines.push_back(new CacheLine(address, state));
 }
 
-void CacheSet::remove_line(_address address) {
-	// TODO
-}
-
 CacheSet::CacheLine* CacheSet::get_line(_address address) {
 	for (unsigned i = 0; i < LINES_PER_SET; i++) {
 		CacheLine* line = lines[i];

@@ -11,6 +11,7 @@ MSICache::MSICache(_id id, Bus* pbus)
 }
 
 void MSICache::push_read_request(_address address) {
+	// TODO Read miss data if shared back onto bus by other caches must be read
 	std::cout << "Read address MSI " << std::hex << address << "\n";
 	CacheSet::CacheLine* line;
 	if ((line = get_line(address)) != NULL) {

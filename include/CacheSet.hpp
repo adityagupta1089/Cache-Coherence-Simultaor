@@ -35,7 +35,6 @@ class CacheSet {
 		CacheSet();
 
 		void add_line(_address, line_state);
-		void remove_line(_address);
 		CacheLine* get_line(_address);
 };
 

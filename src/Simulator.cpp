@@ -3,6 +3,11 @@
 #include <Simulator.hpp>
 
 Simulator::Simulator() {
+	/*
+	 * TODO Is defining Caches and Buses as threads any beneficial? Also,
+	 * making a lock and locking and releasing it should then be done.
+	 * Otherwise serial execution seems fine.
+	 */
 	bus = new Bus(caches);
 	for (_id i = 0; i < PROCESSORS; i++) {
 		Cache* cache;

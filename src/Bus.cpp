@@ -6,5 +6,8 @@ Bus::Bus(std::vector<Cache*>& pcaches)
 }
 
 void Bus::push_request(BusRequest request) {
-	//TODO
+	/*
+	 * TODO Handle bus requests, is broadcasting this request back to all
+	 * caches OK?
+	 */
 }
