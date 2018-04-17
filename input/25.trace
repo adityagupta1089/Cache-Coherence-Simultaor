@@ -1,0 +1,6 @@
+// fetch a line
+R 0x0 0
+// share this
+R 0x0 1
+// read miss from another cache
+R 0x0 2

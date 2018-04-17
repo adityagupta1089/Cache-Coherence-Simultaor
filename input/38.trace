@@ -1,0 +1,6 @@
+// fetch a line
+R 0x0 0
+// create copy (owned for #0 and shared for #1)
+R 0x0 1
+// read it
+R 0x0 1

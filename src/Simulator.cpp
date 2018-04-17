@@ -1,13 +1,10 @@
 #include <Bus.hpp>
+#include <MESICache.hpp>
+#include <MOESICache.hpp>
 #include <MSICache.hpp>
 #include <Simulator.hpp>
 
 Simulator::Simulator() {
-	/*
-	 * TODO Is defining Caches and Buses as threads any beneficial? Also,
-	 * making a lock and locking and releasing it should then be done.
-	 * Otherwise serial execution seems fine.
-	 */
 	bus = new Bus(caches);
 	for (_id i = 0; i < PROCESSORS; i++) {
 		Cache* cache;
@@ -16,10 +13,10 @@ Simulator::Simulator() {
 				cache = new MSICache(i, bus);
 				break;
 			case MESI:
-				//cache = new MESICache(i, bus);
+				cache = new MESICache(i, bus);
 				break;
 			case MOESI:
-				//cache = new MOESICache(i, bus);F
+				cache = new MOESICache(i, bus);
 				break;
 		}
 		caches.push_back(cache);
@@ -29,10 +26,10 @@ Simulator::Simulator() {
 void Simulator::push_request(_operation operation, _address address, _id id) {
 	switch (operation) {
 		case READ:
-			caches[id]->push_read_request(address);
+			caches[id]->read_request(address);
 			break;
 		case WRITE:
-			caches[id]->push_write_request(address);
+			caches[id]->write_request(address);
 			break;
 	}
 }

@@ -1,0 +1,4 @@
+// fetch a line
+R 0x0 0
+// read miss from cache #1
+R 0x0 1

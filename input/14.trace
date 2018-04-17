@@ -1,0 +1,8 @@
+// fetch a line
+R 0x0 0
+// share it to another processor
+R 0x0 1
+// modify it
+W 0x0 0
+// write it from another processor to get a write miss request on bus
+W 0x0 1

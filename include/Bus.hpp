@@ -13,7 +13,7 @@ class Cache;
  */
 class Bus {
 	private:
-		std::vector<Cache*> caches;
+		std::vector<Cache*>& caches;
 
 	public:
 		enum bus_operation {

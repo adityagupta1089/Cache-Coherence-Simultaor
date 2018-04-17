@@ -1,2 +1,0 @@
-# README - Cache Coherence Simulator
-

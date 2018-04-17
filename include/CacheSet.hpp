@@ -32,8 +32,6 @@ class CacheSet {
 		std::vector<CacheLine*> lines;
 
 	public:
-		CacheSet();
-
 		void add_line(_address, line_state);
 		CacheLine* get_line(_address);
 };

@@ -1,4 +1,5 @@
 #include <Bus.hpp>
+#include <Cache.hpp>
 
 Bus::Bus(std::vector<Cache*>& pcaches)
 		: caches(pcaches) {
@@ -6,8 +7,7 @@ Bus::Bus(std::vector<Cache*>& pcaches)
 }
 
 void Bus::push_request(BusRequest request) {
-	/*
-	 * TODO Handle bus requests, is broadcasting this request back to all
-	 * caches OK?
-	 */
+	for (Cache* cache : caches) {
+		cache->push_bus_request(request);
+	}
 }

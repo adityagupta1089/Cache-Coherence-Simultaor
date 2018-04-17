@@ -1,19 +1,19 @@
-#ifndef INCLUDE_MSICACHE_H_
-#define INCLUDE_MSICACHE_H_
+#ifndef INCLUDE_MOESICACHE_HPP_
+#define INCLUDE_MOESICACHE_HPP_
 
 #include "Bus.hpp"
 #include "Cache.hpp"
 #include "Constants.hpp"
 
-class MSICache: public Cache {
+class MOESICache: public Cache {
 	private:
 		void read_request(_address);
 		void write_request(_address);
 
 	public:
-		MSICache(_id id, Bus* pbus);
+		MOESICache(_id id, Bus* pbus);
 
 		virtual bool handle_bus_request(Bus::BusRequest);
 };
 
-#endif /* INCLUDE_MSICACHE_H_ */
+#endif /* INCLUDE_MOESICACHE_HPP_ */

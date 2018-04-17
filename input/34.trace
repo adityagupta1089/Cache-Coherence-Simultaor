@@ -1,0 +1,4 @@
+//fetch a line
+R 0x0 0
+// write
+W 0x0 0

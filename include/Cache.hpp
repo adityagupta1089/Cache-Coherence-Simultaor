@@ -15,6 +15,8 @@ class Cache {
 		std::vector<CacheSet*> sets;
 		Bus* bus;
 
+		bool require_share_data;
+
 		void add_line(_address);
 		void remove_line(_address);
 
@@ -25,9 +27,11 @@ class Cache {
 	public:
 		Cache(_id id, Bus* pbus);
 
-		virtual void push_read_request(_address) = 0;
-		virtual void push_write_request(_address) = 0;
-		virtual void handle_bus_request(Bus::BusRequest) = 0;
+		bool push_bus_request(Bus::BusRequest);
+
+		virtual void read_request(_address) = 0;
+		virtual void write_request(_address) = 0;
+		virtual bool handle_bus_request(Bus::BusRequest) = 0;
 
 		virtual ~Cache() {
 		}

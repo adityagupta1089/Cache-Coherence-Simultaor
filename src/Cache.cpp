@@ -1,7 +1,7 @@
 #include <Cache.hpp>
 
 Cache::Cache(_id pid, Bus* pbus)
-		: id(pid), bus(pbus) {
+		: id(pid), bus(pbus), require_share_data(false) {
 	for (unsigned i = 0; i < SETS; i++) {
 		sets.push_back(new CacheSet());
 	}
@@ -13,4 +13,13 @@ _id Cache::get_set_id(_address address) {
 
 CacheSet::CacheLine* Cache::get_line(_address address) {
 	return sets[get_set_id(address)]->get_line(address);
+}
+
+bool Cache::push_bus_request(Bus::BusRequest request) {
+	if (request.cache_id != id) {
+		if (handle_bus_request(request)) {
+			return true;
+		}
+	}
+	return false;
 }
