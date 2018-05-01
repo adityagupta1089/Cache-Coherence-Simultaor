@@ -63,6 +63,9 @@ void MSICache::write_request(_address address) {
 			{ id, Bus::write_miss, address, nullptr };
 		std::cout << "Cache " << id << ": " << "Placed write miss on bus\n";
 		bus->push_request(request);
+		_id set_id = get_set_id(request.address);
+		sets[set_id]->add_line(request.address, CacheSet::MODIFIED);
+		std::cout << "Cache " << id << ": " << "Wrote data in local cache\n";
 	} else {
 		switch (line->state) {
 			case CacheSet::MODIFIED:
@@ -75,6 +78,9 @@ void MSICache::write_request(_address address) {
 				std::cout << "Cache " << id << ": "
 						<< "Placed invalidate on bus\n";
 				bus->push_request(request);
+				line->state = CacheSet::MODIFIED;
+				std::cout << "Cache " << id << ": "
+						<< "Set state to Modified\n";
 				break;
 			}
 			case CacheSet::INVALID: {
@@ -83,6 +89,9 @@ void MSICache::write_request(_address address) {
 				std::cout << "Cache " << id << ": "
 						<< "Placed write miss on bus\n";
 				bus->push_request(request);
+				line->state = CacheSet::MODIFIED;
+				std::cout << "Cache " << id << ": "
+						<< "Set state to Modified\n";
 				break;
 			}
 			default:
@@ -110,6 +119,8 @@ bool MSICache::handle_bus_request(Bus::BusRequest request) {
 					{ id, Bus::share_data, request.address, line };
 				std::cout << "Cache " << id << ": " << "Shared cache block\n";
 				bus->push_request(re_request);
+				line->state = CacheSet::SHARED;
+				std::cout << "Cache " << id << ": " << "Set state to Shared\n";
 				return true;
 			}
 			break;
@@ -119,6 +130,8 @@ bool MSICache::handle_bus_request(Bus::BusRequest request) {
 				std::cout << "Cache " << id << ": "
 						<< "Attempt to write shared block. Invalidated Cache "
 								"block\n";
+				line->state = CacheSet::SHARED;
+				std::cout << "Cache " << id << ": " << "Set state to Shared\n";
 			} else if (line->state == CacheSet::MODIFIED) {
 				line->invalidate();
 				std::cout << "Cache " << id

@@ -1,12 +1,7 @@
-// fetch a line
 R 0x0 0
-// invalidate it
 W 0x0 1
-// 15a: read it (converts to shared)
 R 0x0 0
-//invalidate again
 W 0x0 1
-// evict the line from cache #1
 W 0x1000 1
 W 0x2000 1
 W 0x3000 1
@@ -15,5 +10,4 @@ W 0x5000 1
 W 0x6000 1
 W 0x7000 1
 W 0x8000 1
-// 15b: read the line from cache #0 (converts to exclusive)
 R 0x0 0

@@ -1,8 +1,5 @@
-// fetch a line
 R 0x0 0
-// create copy (owned for #0 and shared for #1)
 R 0x0 1
-// evict the line from cache #0, i.e. owned copy
 W 0x1000 0
 W 0x2000 0
 W 0x3000 0
@@ -11,5 +8,4 @@ W 0x5000 0
 W 0x6000 0
 W 0x7000 0
 W 0x8000 0
-// read miss from cache #2
 R 0x0 2

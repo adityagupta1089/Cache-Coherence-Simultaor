@@ -1,4 +1,2 @@
-// fetch a line
 R 0x0 0
-// write miss from another cache
 W 0x0 1

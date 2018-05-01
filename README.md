@@ -6,7 +6,7 @@ Simulator that simulates multiprocessor caches and involved cache coherence prot
 ```
 .
 ├── bin/ - Contains binaries
-├── doc - Contains Design Document and Proposed Timeline
+├── doc/ - Contains Design Document and Proposed Timeline
 ├── include/ - Contains header files
 │   ├── Bus.hpp
 │   ├── Cache.hpp

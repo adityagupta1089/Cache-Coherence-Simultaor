@@ -1,6 +1,3 @@
-// fetch a line
 R 0x0 0
-// share a line
 R 0x0 1
-// write it
 W 0x0 1

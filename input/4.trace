@@ -1,6 +1,3 @@
-//fetch a line
 R 0x0 0
-// modify it
 W 0x0 0
-// read miss (different tag)
 R 0x1000 0

@@ -1,8 +1,4 @@
-// fetch a line
 R 0x0 0
-// 1a: cache 0 must now get a hit
 R 0x0 0
-// cache 1 also gets the location (shared)
 W 0x0 1
-// 1b: cache 1 must now get a hit
 R 0x0 1

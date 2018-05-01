@@ -1,6 +1,3 @@
-// fetch a line
 R 0x0 0
-// share it
 R 0x0 1
-// write miss (different tag)
 W 0x1000 1

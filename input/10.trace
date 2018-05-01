@@ -1,6 +1,3 @@
-// fetch a line
 R 0x0 0
-// share & modify it from another processor
 W 0x0 1
-// read it to get a read miss request on bus
 R 0x0 0

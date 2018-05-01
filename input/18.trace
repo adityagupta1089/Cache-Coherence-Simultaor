@@ -1,4 +1,2 @@
-// fetch a line
 R 0x0 0
-// read line
 W 0x0 0
