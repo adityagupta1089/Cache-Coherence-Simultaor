@@ -52,8 +52,6 @@ void MSICache::read_request(_address address) {
 				break;
 			}
 			default:
-				std::cerr << "Cache " << id << ": " << "Invalid cache state "
-						<< static_cast<char>(line->state) << " for MSI Cache\n";
 				break;
 		}
 	}
@@ -104,8 +102,6 @@ void MSICache::write_request(_address address) {
 				break;
 			}
 			default:
-				std::cerr << "Cache " << id << ": " << "Invalid cache state "
-						<< static_cast<char>(line->state) << " for MSI Cache\n";
 				break;
 		}
 	}
@@ -138,10 +134,6 @@ bool MSICache::handle_bus_request(Bus::BusRequest request) {
 					std::cout << "Cache " << id << ": " << "No change\n";
 					break;
 				default:
-					std::cerr << "Cache " << id << ": "
-							<< "Invalid cache state "
-							<< static_cast<char>(line->state)
-							<< " for MSI Cache\n";
 					break;
 			}
 			break;
@@ -162,10 +154,6 @@ bool MSICache::handle_bus_request(Bus::BusRequest request) {
 					std::cout << "Cache " << id << ": " << "No change\n";
 					break;
 				default:
-					std::cerr << "Cache " << id << ": "
-							<< "Invalid cache state "
-							<< static_cast<char>(line->state)
-							<< " for MSI Cache\n";
 					break;
 			}
 			break;

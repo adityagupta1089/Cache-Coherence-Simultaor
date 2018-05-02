@@ -14,13 +14,15 @@ void MESICache::read_request(_address address) {
 			<< std::hex << address << "\n";
 	CacheSet::CacheLine* line = get_line(address);
 	if (!line) {
+		std::cout << "Cache " << id << ": " << "Line not present\n";
 		Bus::BusRequest request =
 			{ id, Bus::read_miss, address, nullptr };
 		std::cout << "Cache " << id << ": " << "Placed a read miss on bus\n";
 		require_share_data = true;
-		bus->push_request(request);
 		/* This blocking call may result in handle_bus_request() to cache the
 		 * data */
+		bus->push_request(request);
+		require_share_data = false;
 		line = get_line(address);
 		if (!line) {
 			std::cout << "Cache " << id << ": "
@@ -31,6 +33,8 @@ void MESICache::read_request(_address address) {
 			std::cout << "Cache " << id << ": " << "Snooped from other cache\n";
 		}
 	} else {
+		std::cout << "Cache " << id << ": " << "Line in state "
+				<< static_cast<char>(line->state) << "\n";
 		switch (line->state) {
 			case CacheSet::MODIFIED:
 			case CacheSet::EXCLUSIVE:
@@ -43,16 +47,16 @@ void MESICache::read_request(_address address) {
 					{ id, Bus::read_miss, address, nullptr };
 				std::cout << "Cache " << id << ": "
 						<< "Placed a read miss on bus\n";
+				require_share_data = true;
 				bus->push_request(request);
+				require_share_data = false;
 				if (!received_share_data) {
-					line->state = CacheSet::MODIFIED;
+					line->state = CacheSet::EXCLUSIVE;
 					received_share_data = false;
 				}
 				break;
 			}
 			default:
-				std::cerr << "Cache " << id << ": " << "Invalid cache state "
-						<< static_cast<char>(line->state) << " for MSI Cache\n";
 				break;
 		}
 	}
@@ -60,10 +64,11 @@ void MESICache::read_request(_address address) {
 }
 
 void MESICache::write_request(_address address) {
-	std::cout << "Cache " << id << ": " << "Read request address MESI "
+	std::cout << "Cache " << id << ": " << "Write request address MESI "
 			<< std::hex << address << "\n";
 	CacheSet::CacheLine* line = get_line(address);
 	if (!line) {
+		std::cout << "Cache " << id << ": " << "Line not present\n";
 		Bus::BusRequest request =
 			{ id, Bus::write_miss, address, nullptr };
 		std::cout << "Cache " << id << ": " << "Placed write miss on bus\n";
@@ -72,6 +77,8 @@ void MESICache::write_request(_address address) {
 		sets[set_id]->add_line(request.address, CacheSet::MODIFIED);
 		std::cout << "Cache " << id << ": " << "Wrote data in local cache\n";
 	} else {
+		std::cout << "Cache " << id << ": " << "Line in state "
+				<< static_cast<char>(line->state) << "\n";
 		switch (line->state) {
 			case CacheSet::MODIFIED:
 				std::cout << "Cache " << id << ": "
@@ -107,23 +114,24 @@ void MESICache::write_request(_address address) {
 				break;
 			}
 			default:
-				std::cerr << "Cache " << id << ": " << "Invalid cache state "
-						<< static_cast<char>(line->state)
-						<< " for MESI Cache\n";
 				break;
 		}
 	}
-
 }
 
 bool MESICache::handle_bus_request(Bus::BusRequest request) {
 	CacheSet::CacheLine* line = get_line(request.address);
 	if (!line && request.operation != Bus::share_data) return false;
+	if (request.operation == Bus::share_data && !require_share_data) return false;
+	std::cout << "Cache " << id << ": " << "Bus request address MESI "
+			<< std::hex << request.address << " from Cache " << request.cache_id
+			<< "\n";
 	switch (request.operation) {
 		case Bus::read_miss:
 			switch (line->state) {
 				case CacheSet::MODIFIED:
-				case CacheSet::EXCLUSIVE: {
+				case CacheSet::EXCLUSIVE:
+				case CacheSet::SHARED: {
 					Bus::BusRequest re_request =
 						{ id, Bus::share_data, request.address, line };
 					std::cout << "Cache " << id << ": "
@@ -133,47 +141,53 @@ bool MESICache::handle_bus_request(Bus::BusRequest request) {
 					std::cout << "Cache " << id << ": "
 							<< "Changed state to Shared\n";
 					return true;
+					break;
 				}
-				case CacheSet::SHARED:
 				case CacheSet::INVALID:
-					/* No change */
+					std::cout << "Cache " << id << ": " << "No change\n";
 					break;
 				default:
-					std::cerr << "Cache " << id << ": "
-							<< "Invalid cache state "
-							<< static_cast<char>(line->state)
-							<< " for MESI Cache\n";
 					break;
 			}
 			break;
 		case Bus::write_miss:
 			switch (line->state) {
-				case CacheSet::MODIFIED:
+				case CacheSet::SHARED:
+					line->invalidate();
+					std::cout << "Cache " << id << ": "
+							<< "Attempt to write shared block. Invalidated Cache "
+									"block\n";
 					break;
 				case CacheSet::EXCLUSIVE:
-					break;
-				case CacheSet::SHARED:
+				case CacheSet::MODIFIED:
+					line->invalidate();
+					std::cout << "Cache " << id
+							<< ": Attempt to write block that is exclusive elsewhere, wrote back the cache block and invalidated cache block\n";
 					break;
 				case CacheSet::INVALID:
+					std::cout << "Cache " << id << ": " << "No change\n";
 					break;
 				default:
-					std::cerr << "Cache " << id << ": "
-							<< "Invalid cache state "
-							<< static_cast<char>(line->state)
-							<< " for MESI Cache\n";
 					break;
 			}
 			break;
 		case Bus::invalidate:
-
+			line->invalidate();
+			std::cout << "Cache " << id << ": "
+					<< "Attempt to write shared block. Invalidated Cache "
+							"block\n";
 			break;
-		case Bus::share_data:
-			received_share_data = true;
+		case Bus::share_data: {
 			std::cout << "Cache " << id << ": "
 					<< "Received cache block from other cache\n";
-			_id set_id = get_set_id(request.address);
-			sets[set_id]->add_line(request.address, CacheSet::SHARED);
+			if (!line) {
+				_id set_id = get_set_id(request.address);
+				sets[set_id]->add_line(request.address, CacheSet::SHARED);
+			} else {
+				line->state = CacheSet::SHARED;
+			}
 			break;
+		}
 	}
 	return false;
 }
