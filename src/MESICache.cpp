@@ -4,8 +4,8 @@
 
 class Bus;
 
-MESICache::MESICache(_id id, Bus* pbus)
-		: Cache(id, pbus) {
+MESICache::MESICache(_id id, Bus* pbus, Simulator::Statistics& stats)
+		: Cache(id, pbus, stats) {
 
 }
 
@@ -14,6 +14,7 @@ void MESICache::read_request(_address address) {
 			<< std::hex << address << "\n";
 	CacheSet::CacheLine* line = get_line(address);
 	if (!line) {
+		stats.misses++;
 		std::cout << "Cache " << id << ": " << "Line not present\n";
 		Bus::BusRequest request =
 			{ id, Bus::read_miss, address, nullptr };
@@ -39,10 +40,12 @@ void MESICache::read_request(_address address) {
 			case CacheSet::MODIFIED:
 			case CacheSet::EXCLUSIVE:
 			case CacheSet::SHARED:
+				stats.hits++;
 				std::cout << "Cache " << id << ": "
 						<< "Read data in local cache\n";
 				break;
 			case CacheSet::INVALID: {
+				stats.misses++;
 				Bus::BusRequest request =
 					{ id, Bus::read_miss, address, nullptr };
 				std::cout << "Cache " << id << ": "
@@ -68,6 +71,7 @@ void MESICache::write_request(_address address) {
 			<< std::hex << address << "\n";
 	CacheSet::CacheLine* line = get_line(address);
 	if (!line) {
+		stats.misses++;
 		std::cout << "Cache " << id << ": " << "Line not present\n";
 		Bus::BusRequest request =
 			{ id, Bus::write_miss, address, nullptr };
@@ -81,10 +85,12 @@ void MESICache::write_request(_address address) {
 				<< static_cast<char>(line->state) << "\n";
 		switch (line->state) {
 			case CacheSet::MODIFIED:
+				stats.hits++;
 				std::cout << "Cache " << id << ": "
 						<< "Wrote data in local cache\n";
 				break;
 			case CacheSet::EXCLUSIVE:
+				stats.hits++;
 				std::cout << "Cache " << id << ": "
 						<< "Wrote data in local cache\n";
 				line->state = CacheSet::MODIFIED;
@@ -92,6 +98,7 @@ void MESICache::write_request(_address address) {
 						<< "Changed state to modified\n";
 				break;
 			case CacheSet::SHARED: {
+				stats.hits++;
 				Bus::BusRequest request =
 					{ id, Bus::invalidate, address, nullptr };
 				std::cout << "Cache " << id << ": "
@@ -103,6 +110,7 @@ void MESICache::write_request(_address address) {
 				break;
 			}
 			case CacheSet::INVALID: {
+				stats.misses++;
 				Bus::BusRequest request =
 					{ id, Bus::write_miss, address, nullptr };
 				std::cout << "Cache " << id << ": "
@@ -161,6 +169,7 @@ bool MESICache::handle_bus_request(Bus::BusRequest request) {
 				case CacheSet::EXCLUSIVE:
 				case CacheSet::MODIFIED:
 					line->invalidate();
+					stats.flushes++;
 					std::cout << "Cache " << id
 							<< ": Attempt to write block that is exclusive elsewhere, wrote back the cache block and invalidated cache block\n";
 					break;
@@ -178,6 +187,7 @@ bool MESICache::handle_bus_request(Bus::BusRequest request) {
 							"block\n";
 			break;
 		case Bus::share_data: {
+			received_share_data = true;
 			std::cout << "Cache " << id << ": "
 					<< "Received cache block from other cache\n";
 			if (!line) {

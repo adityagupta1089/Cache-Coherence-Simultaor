@@ -5,15 +5,14 @@
 
 #include "CacheSet.hpp"
 #include "Constants.hpp"
+#include "Simulator.hpp"
 
 class Cache;
 
-/*
- * NOTE: Don't include Cache.hpp, cross-referencing problem
- */
 class Bus {
 	private:
 		std::vector<Cache*>& caches;
+		Simulator::Statistics& stats;
 
 	public:
 		enum bus_operation {
@@ -30,7 +29,7 @@ class Bus {
 				CacheSet::CacheLine* data;
 		};
 
-		Bus(std::vector<Cache*>&);
+		Bus(std::vector<Cache*>&, Simulator::Statistics&);
 
 		void push_request(BusRequest);
 };

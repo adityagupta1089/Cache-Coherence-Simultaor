@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "Constants.hpp"
+#include "Simulator.hpp"
 
 class CacheSet {
 	public:
@@ -30,8 +31,10 @@ class CacheSet {
 
 	private:
 		std::vector<CacheLine*> lines;
+		Simulator::Statistics& stats;
 
 	public:
+		CacheSet(Simulator::Statistics&);
 		void add_line(_address, line_state);
 		CacheLine* get_line(_address);
 };

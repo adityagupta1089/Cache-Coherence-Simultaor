@@ -2,8 +2,8 @@
 #include <MOESICache.hpp>
 #include <iostream>
 
-MOESICache::MOESICache(_id id, Bus* pbus)
-		: Cache(id, pbus) {
+MOESICache::MOESICache(_id id, Bus* pbus, Simulator::Statistics& stats)
+		: Cache(id, pbus, stats) {
 
 }
 
@@ -12,6 +12,7 @@ void MOESICache::read_request(_address address) {
 			<< std::hex << address << "\n";
 	CacheSet::CacheLine* line = get_line(address);
 	if (!line) {
+		stats.misses++;
 		std::cout << "Cache " << id << ": " << "Line not present\n";
 		Bus::BusRequest request =
 			{ id, Bus::read_miss, address, nullptr };
@@ -38,10 +39,12 @@ void MOESICache::read_request(_address address) {
 			case CacheSet::EXCLUSIVE:
 			case CacheSet::SHARED:
 			case CacheSet::OWNED:
+				stats.hits++;
 				std::cout << "Cache " << id << ": "
 						<< "Read data in local cache\n";
 				break;
 			case CacheSet::INVALID: {
+				stats.misses++;
 				Bus::BusRequest request =
 					{ id, Bus::read_miss, address, nullptr };
 				std::cout << "Cache " << id << ": "
@@ -64,6 +67,7 @@ void MOESICache::write_request(_address address) {
 			<< std::hex << address << "\n";
 	CacheSet::CacheLine* line = get_line(address);
 	if (!line) {
+		stats.misses++;
 		std::cout << "Cache " << id << ": " << "Line not present\n";
 		Bus::BusRequest request =
 			{ id, Bus::write_miss, address, nullptr };
@@ -77,10 +81,12 @@ void MOESICache::write_request(_address address) {
 				<< static_cast<char>(line->state) << "\n";
 		switch (line->state) {
 			case CacheSet::MODIFIED:
+				stats.hits++;
 				std::cout << "Cache " << id << ": "
 						<< "Wrote data in local cache\n";
 				break;
 			case CacheSet::EXCLUSIVE:
+				stats.hits++;
 				std::cout << "Cache " << id << ": "
 						<< "Wrote data in local cache\n";
 				line->state = CacheSet::MODIFIED;
@@ -89,6 +95,7 @@ void MOESICache::write_request(_address address) {
 				break;
 			case CacheSet::SHARED:
 			case CacheSet::OWNED: {
+				stats.hits++;
 				Bus::BusRequest request =
 					{ id, Bus::invalidate, address, nullptr };
 				std::cout << "Cache " << id << ": "
@@ -100,6 +107,7 @@ void MOESICache::write_request(_address address) {
 				break;
 			}
 			case CacheSet::INVALID: {
+				stats.misses++;
 				Bus::BusRequest request =
 					{ id, Bus::write_miss, address, nullptr };
 				std::cout << "Cache " << id << ": "
@@ -126,8 +134,7 @@ bool MOESICache::handle_bus_request(Bus::BusRequest request) {
 			switch (line->state) {
 				case CacheSet::MODIFIED:
 				case CacheSet::OWNED:
-				case CacheSet::EXCLUSIVE:
-				case CacheSet::SHARED: {
+				case CacheSet::EXCLUSIVE: {
 					Bus::BusRequest re_request =
 						{ id, Bus::share_data, request.address, line };
 					std::cout << "Cache " << id << ": "
@@ -145,6 +152,10 @@ bool MOESICache::handle_bus_request(Bus::BusRequest request) {
 					return true;
 					break;
 				}
+				case CacheSet::SHARED:
+					std::cout << "Cache " << id << ": "
+							<< "Allowing other caches to service memory\n";
+					break;
 				case CacheSet::INVALID:
 					std::cout << "Cache " << id << ": " << "No change\n";
 					break;
@@ -160,10 +171,14 @@ bool MOESICache::handle_bus_request(Bus::BusRequest request) {
 					break;
 				case CacheSet::EXCLUSIVE:
 				case CacheSet::MODIFIED:
-				case CacheSet::OWNED:
 					line->invalidate();
 					std::cout << "Cache " << id
 							<< ": Attempt to write block that is exclusive elsewhere, invalidated cache block\n";
+					break;
+				case CacheSet::OWNED:
+					stats.flushes++;
+					std::cout << "Cache " << id
+							<< ": Attempt to write block that is exclusive elsewhere, invalidated cache block wrote back to memory\n";
 					break;
 				case CacheSet::INVALID:
 					std::cout << "Cache " << id << ": " << "No change\n";
@@ -177,6 +192,7 @@ bool MOESICache::handle_bus_request(Bus::BusRequest request) {
 							"block\n";
 			break;
 		case Bus::share_data: {
+			received_share_data = true;
 			std::cout << "Cache " << id << ": "
 					<< "Received cache block from other cache\n";
 			if (!line) {

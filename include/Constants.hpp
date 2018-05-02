@@ -22,6 +22,6 @@ const unsigned int OFFSET_BITS = 6;
 const unsigned int INDEX_BITS = 6;
 const unsigned int TAG_BITS = 20;
 
-const protocol PROTOCOL = MSI;
+const protocol PROTOCOL = MOESI;
 
 #endif /* INCLUDE_CONSTANTS_HPP_ */

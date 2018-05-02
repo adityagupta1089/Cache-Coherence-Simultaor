@@ -40,3 +40,11 @@ Simulator that simulates multiprocessor caches and involved cache coherence prot
 | Cleaning | `make clean`                      |
 | Running  | `./bin/main.o <input_trace_file>` |
 
+**Note:** To choose protocol edit line #25 in `include/Constants.hpp` to `MSI`, `MESI` or `MOESI`:
+
+```
+
+const protocol PROTOCOL = MOESI;
+	
+```
+

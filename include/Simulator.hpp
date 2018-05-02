@@ -3,8 +3,10 @@
 
 #include <vector>
 
-#include "Cache.hpp"
 #include "Constants.hpp"
+
+class Cache;
+class Bus;
 
 enum _operation {
 	READ = 'R',
@@ -13,13 +15,26 @@ enum _operation {
 
 class Simulator {
 
+	public:
+		struct Statistics {
+				unsigned int flushes;
+				unsigned int hits;
+				unsigned int misses;
+				unsigned int evicts;
+				unsigned int shares;
+				unsigned int bus_requests;
+		};
+
 	private:
 		std::vector<Cache*> caches;
 		Bus* bus;
 
+		Statistics stats;
+
 	public:
 		Simulator();
 		void push_request(_operation, _address, _id);
+		void print_statistics();
 
 };
 

@@ -1,9 +1,10 @@
 #include <Cache.hpp>
 
-Cache::Cache(_id pid, Bus* pbus)
-		: id(pid), bus(pbus), require_share_data(false), received_share_data(false) {
+Cache::Cache(_id pid, Bus* pbus, Simulator::Statistics& pstats)
+		: id(pid), bus(pbus), stats(pstats), require_share_data(false), received_share_data(
+				false) {
 	for (unsigned i = 0; i < SETS; i++) {
-		sets.push_back(new CacheSet());
+		sets.push_back(new CacheSet(pstats));
 	}
 }
 

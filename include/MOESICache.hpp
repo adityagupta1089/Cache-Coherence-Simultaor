@@ -4,6 +4,7 @@
 #include "Bus.hpp"
 #include "Cache.hpp"
 #include "Constants.hpp"
+#include "Simulator.hpp"
 
 class MOESICache: public Cache {
 	private:
@@ -11,7 +12,7 @@ class MOESICache: public Cache {
 		void write_request(_address);
 
 	public:
-		MOESICache(_id id, Bus* pbus);
+		MOESICache(_id, Bus*, Simulator::Statistics&);
 
 		virtual bool handle_bus_request(Bus::BusRequest);
 };

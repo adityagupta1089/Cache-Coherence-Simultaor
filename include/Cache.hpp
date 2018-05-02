@@ -6,14 +6,14 @@
 #include "Bus.hpp"
 #include "CacheSet.hpp"
 #include "Constants.hpp"
-
-class Bus;
+#include "Simulator.hpp"
 
 class Cache {
 	protected:
 		_id id;
 		std::vector<CacheSet*> sets;
 		Bus* bus;
+		Simulator::Statistics& stats;
 
 		bool require_share_data;
 		bool received_share_data;
@@ -26,7 +26,7 @@ class Cache {
 		_id get_set_id(_address);
 
 	public:
-		Cache(_id id, Bus* pbus);
+		Cache(_id, Bus*, Simulator::Statistics&);
 
 		bool push_bus_request(Bus::BusRequest);
 

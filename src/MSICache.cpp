@@ -4,8 +4,8 @@
 
 class Bus;
 
-MSICache::MSICache(_id id, Bus* pbus)
-		: Cache(id, pbus) {
+MSICache::MSICache(_id id, Bus* pbus, Simulator::Statistics& stats)
+		: Cache(id, pbus, stats) {
 
 }
 
@@ -14,6 +14,7 @@ void MSICache::read_request(_address address) {
 			<< std::hex << address << "\n";
 	CacheSet::CacheLine* line = get_line(address);
 	if (!line) {
+		stats.misses++;
 		std::cout << "Cache " << id << ": " << "Line not present\n";
 		Bus::BusRequest request =
 			{ id, Bus::read_miss, address, nullptr };
@@ -38,10 +39,12 @@ void MSICache::read_request(_address address) {
 		switch (line->state) {
 			case CacheSet::MODIFIED:
 			case CacheSet::SHARED:
+				stats.hits++;
 				std::cout << "Cache " << id << ": "
 						<< "Read data in local cache\n";
 				break;
 			case CacheSet::INVALID: {
+				stats.misses++;
 				Bus::BusRequest request =
 					{ id, Bus::read_miss, address, nullptr };
 				std::cout << "Cache " << id << ": "
@@ -63,6 +66,7 @@ void MSICache::write_request(_address address) {
 			<< std::hex << address << "\n";
 	CacheSet::CacheLine* line = get_line(address);
 	if (!line) {
+		stats.misses++;
 		std::cout << "Cache " << id << ": " << "Line not present\n";
 		Bus::BusRequest request =
 			{ id, Bus::write_miss, address, nullptr };
@@ -76,10 +80,12 @@ void MSICache::write_request(_address address) {
 				<< static_cast<char>(line->state) << "\n";
 		switch (line->state) {
 			case CacheSet::MODIFIED:
+				stats.hits++;
 				std::cout << "Cache " << id << ": "
 						<< "Wrote data in local cache\n";
 				break;
 			case CacheSet::SHARED: {
+				stats.hits++;
 				Bus::BusRequest request =
 					{ id, Bus::invalidate, address, nullptr };
 				std::cout << "Cache " << id << ": "
@@ -91,6 +97,7 @@ void MSICache::write_request(_address address) {
 				break;
 			}
 			case CacheSet::INVALID: {
+				stats.misses++;
 				Bus::BusRequest request =
 					{ id, Bus::write_miss, address, nullptr };
 				std::cout << "Cache " << id << ": "
@@ -147,6 +154,7 @@ bool MSICache::handle_bus_request(Bus::BusRequest request) {
 					break;
 				case CacheSet::MODIFIED:
 					line->invalidate();
+					stats.flushes++;
 					std::cout << "Cache " << id
 							<< ": Attempt to write block that is exclusive elsewhere, wrote back the cache block and invalidated cache block\n";
 					break;

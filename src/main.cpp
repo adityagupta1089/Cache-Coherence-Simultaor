@@ -38,6 +38,8 @@ int main(int argc, char** argv) {
 
 	in.close();
 
+	simulator.print_statistics();
+
 	return 0;
 }
 
