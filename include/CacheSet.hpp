@@ -8,11 +8,11 @@
 class CacheSet {
 	public:
 		enum line_state {
-			MODIFIED,
-			OWNED,
-			EXCLUSIVE,
-			SHARED,
-			INVALID
+			MODIFIED = 'M',
+			OWNED = 'O',
+			EXCLUSIVE = 'E',
+			SHARED = 'S',
+			INVALID = 'I'
 		};
 
 		struct CacheLine {

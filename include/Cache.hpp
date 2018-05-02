@@ -16,6 +16,7 @@ class Cache {
 		Bus* bus;
 
 		bool require_share_data;
+		bool received_share_data;
 
 		void add_line(_address);
 		void remove_line(_address);

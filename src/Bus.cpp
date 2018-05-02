@@ -8,6 +8,6 @@ Bus::Bus(std::vector<Cache*>& pcaches)
 
 void Bus::push_request(BusRequest request) {
 	for (Cache* cache : caches) {
-		cache->push_bus_request(request);
+		if (cache->push_bus_request(request)) break;
 	}
 }
